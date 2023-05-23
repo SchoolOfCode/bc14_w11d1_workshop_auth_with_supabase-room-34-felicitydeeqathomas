@@ -19,10 +19,23 @@ const supabase = createClient(
 function App() {
   const [session, setSession] = useState(null);
 
+
   async function handleClick() {
-   let  { data, error } = await supabase.from('leaderboard').insert({ name: 'Bob', score: 99999 })
+   let  { data, error } = await supabase.from('leaderboard').insert({ name: 'Stacy', score: 99999 })
   console.log(data, error)
   }
+
+
+  async function handleRead () { 
+    
+    let { data, error } = await supabase
+  .from('leaderboard')
+  .select('name, score')
+  .order('score', { ascending: false })
+
+  console.log(data, error)
+
+}
 
   useEffect(() => {
     supabase.auth.getSession().then(({data: {session}}) => {
@@ -46,6 +59,7 @@ function App() {
         Logged in!
         <button onClick={() => supabase.auth.signOut()}>Sign out</button>;
         <button onClick={handleClick}>InsertIntoTable</button>;
+        <button onClick={handleRead}>ReadFromTable</button>;
       </div>
     );
   }
