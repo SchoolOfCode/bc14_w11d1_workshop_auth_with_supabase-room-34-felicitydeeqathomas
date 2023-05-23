@@ -19,23 +19,41 @@ const supabase = createClient(
 function App() {
   const [session, setSession] = useState(null);
 
+  // function for user updating their own score based of ID
 
-  async function handleClick() {
-   let  { data, error } = await supabase.from('leaderboard').insert({ name: 'Stacy', score: 99999 })
-  console.log(data, error)
+  async function handleUpdate() {
+    let {data, error} = await supabase
+
+      .from("my_scores")
+      .match({user_id: "5a4365e7-7c7d-4eaf-a8ee-9ec9432917ca"})
+      .update({score: 1000});
+
+    console.log(data, error);
   }
 
+  async function handleReadScores() {
+    let {data, error} = await supabase
+      .from("my_scores")
+      .select("name", "score")
+      .order("score", {ascending: false});
+    console.log(data, error);
+  }
 
-  async function handleRead () { 
-    
-    let { data, error } = await supabase
-  .from('leaderboard')
-  .select('name, score')
-  .order('score', { ascending: false })
+  async function handleClick() {
+    let {data, error} = await supabase
+      .from("leaderboard")
+      .insert({name: "Stacy", score: 99999});
+    console.log(data, error);
+  }
 
-  console.log(data, error)
+  async function handleRead() {
+    let {data, error} = await supabase
+      .from("leaderboard")
+      .select("name, score")
+      .order("score", {ascending: false});
 
-}
+    console.log(data, error);
+  }
 
   useEffect(() => {
     supabase.auth.getSession().then(({data: {session}}) => {
@@ -60,6 +78,8 @@ function App() {
         <button onClick={() => supabase.auth.signOut()}>Sign out</button>;
         <button onClick={handleClick}>InsertIntoTable</button>;
         <button onClick={handleRead}>ReadFromTable</button>;
+        <button onClick={handleUpdate}>UpdateTable</button>;
+        <button onClick={handleReadScores}>ReadScores</button>;
       </div>
     );
   }
