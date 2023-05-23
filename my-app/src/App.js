@@ -7,11 +7,22 @@ import {ThemeSupa} from "@supabase/auth-ui-shared";
 
 const supabase = createClient(
   "https://vxrwearolvgakkdknmjk.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4cndlYXJvbHZnYWtrZGtubWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODQ3Njg0MzEsImV4cCI6MjAwMDM0NDQzMX0.IDSahulltE74D68t0p-VDfWZPt0PHeOxJZX3-hY3C-0"
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4cndlYXJvbHZnYWtrZGtubWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODQ4NDEzODAsImV4cCI6MjAwMDQxNzM4MH0.BQIDT8uuSQanuJV6q-CeP1LdWZ_D_MQlZfxvXzfYCCo",
+  {
+    headers: {
+      Authorization:
+        "Bearer 2LVJJYNlbQbNhDcWOoMedTTMADlktpDakfS8J3cam1fnIUBJCzJQfVj3iFaInOI6QNTbpXSBtwwzeOrsHZtNxA==",
+    },
+  }
 );
 
 function App() {
   const [session, setSession] = useState(null);
+
+  async function handleClick() {
+   let  { data, error } = await supabase.from('leaderboard').insert({ name: 'Bob', score: 99999 })
+  console.log(data, error)
+  }
 
   useEffect(() => {
     supabase.auth.getSession().then(({data: {session}}) => {
@@ -30,7 +41,13 @@ function App() {
   if (!session) {
     return <Auth supabaseClient={supabase} appearance={{theme: ThemeSupa}} />;
   } else {
-    return <div>Logged in!</div>;
+    return (
+      <div>
+        Logged in!
+        <button onClick={() => supabase.auth.signOut()}>Sign out</button>;
+        <button onClick={handleClick}>InsertIntoTable</button>;
+      </div>
+    );
   }
 }
 export default App;
